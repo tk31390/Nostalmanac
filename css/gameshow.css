@@ -4,30 +4,17 @@ body.game-show .top strong {
   text-shadow: 3px 3px 0 #111, 0 0 20px var(--nick), 0 0 36px var(--slime);
 }
 
-.show-badge {
-  width: min(94vw, 720px);
-  margin: 0 auto 4px;
-  text-align: center;
-  font-family: Bangers, Impact, sans-serif;
-  font-size: clamp(22px, 6.5vw, 34px);
-  letter-spacing: .12em;
-  color: #fff;
-  background: linear-gradient(180deg, var(--nick) 0%, #c44a00 100%);
-  border: 4px solid #111;
-  box-shadow: 5px 5px 0 #111, 0 0 28px rgba(255,106,0,.55);
-  padding: 6px 12px;
-  transform: rotate(-1.5deg);
-  pointer-events: none;
-  transition: transform 0.25s ease, filter 0.25s ease;
-}
-.show-badge.pop {
-  transform: rotate(2deg) scale(1.06);
-  filter: brightness(1.25);
-}
-
 body.game-show .masthead #magSection {
   color: var(--slime);
   text-shadow: 0 0 14px rgba(182,255,0,.45), 2px 2px 0 #111;
+}
+
+body.game-show .masthead #magYear.year-zap {
+  animation: yearZap 0.55s ease-out;
+}
+@keyframes yearZap {
+  0% { transform: scale(1.35); color: var(--nick); text-shadow: 0 0 20px var(--slime); }
+  100% { transform: scale(1); }
 }
 
 body.game-show .crt-bezel {
@@ -47,15 +34,89 @@ body.game-show #pos {
   text-shadow: 0 0 12px rgba(182,255,0,.35);
 }
 
-body.game-show.is-wiping .show-badge {
-  animation: badgeSlime 0.48s ease-out;
-}
-@keyframes badgeSlime {
-  50% { background: linear-gradient(180deg, var(--slime) 0%, #7adf00 100%); color: #111; }
-}
-
 body.game-show .world .sign {
   background: linear-gradient(180deg, rgba(255,106,0,.92), rgba(180,40,0,.92));
   color: #fff;
   box-shadow: 4px 4px 0 #111, 0 0 22px rgba(182,255,0,.35);
+}
+
+/* Comic + catchphrase wipes */
+#wipe .wipe-burst {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(92vw, 520px);
+  height: min(92vw, 520px);
+  margin: calc(min(92vw, 520px) / -2) 0 0 calc(min(92vw, 520px) / -2);
+  background:
+    conic-gradient(from 0deg, #ff3d00 0 12%, transparent 12% 24%, #b6ff00 24% 36%, transparent 36% 48%, #00f0ff 48% 60%, transparent 60% 72%, #ff2bd6 72% 84%, transparent 84%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+#wipe.go .wipe-burst {
+  animation: burstPop 0.48s ease-out;
+}
+@keyframes burstPop {
+  0% { opacity: 0.85; transform: scale(0.2) rotate(-20deg); }
+  100% { opacity: 0; transform: scale(1.35) rotate(18deg); }
+}
+
+.wipe-channel {
+  position: absolute;
+  top: 14%;
+  right: 8%;
+  font-family: VT323, monospace;
+  font-size: clamp(28px, 8vw, 56px);
+  color: #b6ff00;
+  text-shadow: 3px 3px 0 #111, 0 0 18px rgba(182,255,0,.6);
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: skewX(-8deg);
+}
+#wipe.channel.go .wipe-channel {
+  animation: channelFlash 0.5s ease-out;
+}
+@keyframes channelFlash {
+  0%, 35% { opacity: 1; transform: skewX(-8deg) scale(1.08); }
+  100% { opacity: 0; transform: skewX(-4deg) scale(1); }
+}
+
+#wipe.kapow.go #wipeWord {
+  color: #ffe600;
+  text-shadow: 6px 6px 0 #c40000, -2px -2px 0 #111, 0 0 28px #ff3d00;
+}
+#wipe.boom.go #wipeWord {
+  color: #ff6a00;
+  text-shadow: 8px 8px 0 #111, 0 0 32px #b6ff00;
+  animation: yellBoom 0.52s ease-out;
+}
+@keyframes yellBoom {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.25) rotate(-12deg); }
+  55% { transform: translate(-50%, -50%) scale(1.15) rotate(4deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5) rotate(10deg); }
+}
+#wipe.zap.go #wipeWord {
+  color: #00f0ff;
+  text-shadow: 5px 5px 0 #2b00ff, 0 0 36px #fff;
+}
+#wipe.catch.phrase.go #wipeWord {
+  font-size: clamp(36px, 10vw, 88px);
+  color: #ff2bd6;
+  text-shadow: 4px 4px 0 #111, 0 0 22px #b6ff00;
+  letter-spacing: 0.04em;
+}
+#wipe.vhs.go {
+  animation: vhsWobble 0.5s linear;
+}
+@keyframes vhsWobble {
+  0%, 100% { transform: none; filter: none; }
+  25% { transform: skewX(1.2deg); filter: hue-rotate(8deg); }
+  75% { transform: skewX(-1deg); filter: contrast(1.15); }
+}
+#wipe.vhs.go #wipeWord {
+  font-family: VT323, monospace;
+  color: #ddd;
+  text-shadow: 2px 2px 0 #111;
+  letter-spacing: 0.12em;
 }

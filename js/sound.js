@@ -164,6 +164,23 @@ export class Boombox {
     return { src, filter };
   }
 
+  comicHit() {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    const thump = this.ctx.createOscillator();
+    const tg = this.ctx.createGain();
+    thump.type = 'square';
+    thump.frequency.setValueAtTime(110, now);
+    thump.frequency.exponentialRampToValueAtTime(55, now + 0.09);
+    tg.gain.setValueAtTime(0.14, now);
+    tg.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    thump.connect(tg).connect(this.master || this.ctx.destination);
+    thump.start(now);
+    thump.stop(now + 0.14);
+    this.noise(0.06, 0.22, (t) => 1 - t * 2);
+  }
+
   scratch() {
     if (!this.ctx || this.muted) return;
     this.ctx.resume();

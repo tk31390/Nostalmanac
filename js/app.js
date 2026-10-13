@@ -3,16 +3,10 @@ import { portrait } from './art.js';
 import { youtubeUrl } from './wiki.js';
 import { Boombox } from './sound.js';
 import { createWormholeTunnel } from './wormhole-tunnel.js';
+import { SECTION, pickWipe, chipQuip, syncWorldSigns } from './transitions.js';
 
 const $ = (id) => document.getElementById(id);
 const VIBE = { cartoon: 'toon', movie: 'movie', music: 'jam', game: 'cart', fad: 'fad' };
-const SECTION = {
-  cartoon: { vault: 'TOON VAULT', chip: 'CARTOONS', drawer: 'TOON VAULT' },
-  movie: { vault: 'REEL CULTURE', chip: 'MOVIES', drawer: 'REEL CULTURE' },
-  music: { vault: 'CHART CRUSH', chip: 'SONGS', drawer: 'CHART CRUSH' },
-  game: { vault: 'PLAY MOUNTAIN', chip: 'GAMES', drawer: 'PLAY MOUNTAIN' },
-  fad: { vault: 'MUST-HAVES', chip: 'FADS', drawer: 'MUST-HAVES' },
-};
 
 const boom = new Boombox();
 let deck = ITEMS.slice();
@@ -63,30 +57,61 @@ function staticFrame(ctx, w, h) {
   ctx.putImageData(img, 0, 0);
 }
 
-function wipe(kind) {
+function vhsFrame(ctx, w, h) {
+  ctx.fillStyle = '#1a1a22';
+  ctx.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 3) {
+    const v = 40 + Math.random() * 200;
+    ctx.fillStyle = `rgb(${v},${v},${v + 10})`;
+    ctx.fillRect(0, y, w, 2);
+  }
+  const bandY = (performance.now() / 8) % h;
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillRect(0, bandY, w, h * 0.08);
+}
+
+function wipeTransition(opts = {}) {
+  const fx = pickWipe(opts);
   const el = $('wipe');
   const canvas = $('wipeFx');
   const word = $('wipeWord');
-  const fx = $('fx');
+  const channel = $('wipeChannel');
+  const fxEl = $('fx');
   el.className = '';
-  el.classList.add('go', kind, 'slime');
+  el.classList.add('go', fx.style, 'slime');
+  if (fx.phrase) el.classList.add('phrase');
+  if (fx.vhs) el.classList.add('vhs');
+  if (fx.scratch) el.classList.add('scratch');
+  if (fx.channel) el.classList.add('channel');
   document.body.classList.add('is-wiping');
-  fx?.classList.add('slime-burst');
-  word.textContent = kind === 'scratch' ? 'SKRRRT' : 'SHHH';
+  fxEl?.classList.add('slime-burst');
+  word.textContent = fx.word;
+  if (channel) {
+    if (fx.channel) {
+      channel.hidden = false;
+      channel.textContent = `CH ${fx.channel}`;
+    } else {
+      channel.hidden = true;
+    }
+  }
   const ctx = canvas.getContext('2d', { alpha: false });
-  const w = canvas.width = Math.min(180, innerWidth / 4);
-  const h = canvas.height = Math.min(100, innerHeight / 4);
+  const full = fx.vhs || fx.channel;
+  const w = canvas.width = full ? innerWidth : Math.min(innerWidth, 640);
+  const h = canvas.height = full ? innerHeight : Math.min(innerHeight, 360);
   let n = 0;
+  const frames = full ? 18 : 14;
   const tick = () => {
-    staticFrame(ctx, w, h);
-    if (++n < 14) requestAnimationFrame(tick);
+    if (fx.vhs) vhsFrame(ctx, w, h);
+    else staticFrame(ctx, w, h);
+    if (++n < frames) requestAnimationFrame(tick);
   };
   tick();
-  boom.staticBurst();
   boom.slimeSplat();
-  if (kind === 'scratch') boom.scratch();
-  clearTimeout(wipe.t);
-  wipe.t = setTimeout(() => {
+  if (fx.scratch) boom.scratch();
+  else if (fx.style === 'kapow' || fx.style === 'boom' || fx.style === 'zap') boom.comicHit();
+  else boom.staticBurst();
+  clearTimeout(wipeTransition.t);
+  wipeTransition.t = setTimeout(() => {
     el.className = '';
     document.body.classList.remove('is-wiping');
     document.body.classList.add('slime-wiped');
@@ -99,18 +124,26 @@ function wipe(kind) {
   }, 480);
 }
 
+let lastYear = null;
+
 function render(item) {
   const sec = SECTION[item.cat] || { vault: item.cat.toUpperCase(), chip: item.cat.toUpperCase() };
   $('magSection').textContent = sec.vault;
-  $('magYear').textContent = String(item.year);
+  const yearEl = $('magYear');
+  yearEl.textContent = String(item.year);
+  if (lastYear !== null && lastYear !== item.year) {
+    yearEl.classList.remove('year-zap');
+    void yearEl.offsetWidth;
+    yearEl.classList.add('year-zap');
+  }
+  lastYear = item.year;
+  const quip = chipQuip(item.cat);
   $('tag').textContent = `${item.year} · ${sec.chip}`;
   $('title').textContent = item.title;
   $('note').textContent = item.note;
-  $('stickerTag').textContent = sec.chip;
+  $('stickerTag').textContent = quip;
   showRound = Math.floor(Math.random() * 900) + 100;
   $('pos').textContent = `ROUND ${showRound} · ${deck.length} IN PLAY`;
-  $('showBadge')?.classList.add('pop');
-  setTimeout(() => $('showBadge')?.classList.remove('pop'), 420);
   $('ytLink').href = youtubeUrl(item);
   $('wikiLink').href = wikiSearch(item);
   paintWorld(item.cat);
@@ -134,13 +167,14 @@ function prefetchRandom() {
   boom.lookup(a).catch(() => {});
 }
 
-function landOn(pick, fx) {
+function landOn(pick) {
   if (!deck.length) return false;
   const prevCat = deck[i]?.cat;
   i = (pick + deck.length) % deck.length;
   const item = deck[i];
-  const kind = fx || (item.cat === 'music' || item.cat === 'game' ? 'scratch' : 'static');
-  wipe(kind);
+  const genreChange = Boolean(prevCat && prevCat !== item.cat);
+  const musicOrGame = item.cat === 'music' || item.cat === 'game';
+  wipeTransition({ genreChange, musicOrGame });
   render(item);
   if (prevCat && prevCat !== item.cat) boom.channelSurf(item.cat);
   else boom.slideLand();
@@ -149,14 +183,14 @@ function landOn(pick, fx) {
   return item;
 }
 
-async function spinRandom(fx) {
+async function spinRandom() {
   if (!deck.length) return;
   const tries = Math.min(64, Math.max(16, deck.length));
   for (let n = 0; n < tries; n++) {
     const pick = randomDeckIndex(i);
     const item = deck[pick];
     if (!(await boom.hasPreview(item))) continue;
-    landOn(pick, fx);
+    landOn(pick);
     await boom.play(item);
     return;
   }
@@ -214,8 +248,9 @@ function boot() {
   const years = $('years');
   years.innerHTML = `<button type="button" data-year="" class="on">ALL</button>`
     + Array.from({ length: 10 }, (_, n) => 1990 + n).map((y) => `<button type="button" data-year="${y}">${y}</button>`).join('');
-  $('cats').innerHTML = [['', 'ALL'], ['cartoon', 'TOON VAULT'], ['movie', 'REEL CULTURE'], ['music', 'CHART CRUSH'], ['game', 'PLAY MOUNTAIN'], ['fad', 'MUST-HAVES']]
+  $('cats').innerHTML = [['', 'ALL'], ...Object.entries(SECTION).map(([id, s]) => [id, s.drawer])]
     .map(([id, label], n) => `<button type="button" data-cat="${id}" class="${n === 0 ? 'on' : ''}">${label}</button>`).join('');
+  syncWorldSigns();
 
   years.addEventListener('click', (e) => {
     const b = e.target.closest('button');
@@ -241,13 +276,12 @@ function boot() {
     const idx = picked ? deck.findIndex((it) => it.title === picked.title && it.cat === picked.cat) : 0;
     i = idx < 0 ? 0 : idx;
     closeDrawer();
-    const fx = picked?.cat === 'music' || picked?.cat === 'game' ? 'scratch' : 'static';
     (async () => {
       if (await boom.hasPreview(deck[i])) {
-        landOn(i, fx);
+        landOn(i);
         await boom.play(deck[i]);
       } else {
-        await spinRandom(fx);
+        await spinRandom();
       }
     })();
   });
@@ -305,7 +339,7 @@ function boot() {
     coolUntil = Date.now() + 500;
     document.body.classList.add('game-show');
     boom.gameShowStinger();
-    await spinRandom('scratch');
+    await spinRandom();
   };
   ['pointerdown', 'touchstart', 'click'].forEach((ev) => {
     $('connect').addEventListener(ev, start, { passive: true });
