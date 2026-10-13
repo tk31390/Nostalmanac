@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>NOSTALMANAC · 90s kid</title>
-  <meta name="description" content="v2.0 — 2× the 90s kid hits. Cartoons, movies, songs, games, and fads. Tap connect and scroll.">
+  <title>NOSTALMANAC · v1.990</title>
+  <meta name="description" content="v1.990 — 90s kid cartoons, movies, songs, games, and fads on a CRT. Tap in and scroll.">
   <meta name="theme-color" content="#ff3d00">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,9 @@
   <link rel="preconnect" href="https://en.wikipedia.org">
   <link rel="preconnect" href="https://api.tvmaze.com">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bangers&family=Outfit:wght@600;800&family=VT323&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=39">
+  <link rel="stylesheet" href="css/v1990.css?v=39">
+  <link rel="stylesheet" href="css/gameshow.css?v=39">
 </head>
 <body data-vibe="toon">
   <audio id="bed" playsinline webkit-playsinline loop preload="auto" src="audio/silence.wav"></audio>
@@ -20,44 +22,34 @@
 
   <div id="worlds" aria-hidden="true">
     <div class="world is-on" data-vibe="toon">
-      <i class="tv-room"></i>
-      <b class="sign">SATURDAY MORNING</b>
+      <i class="mag-bg"></i>
+      <i class="mag-scrim"></i>
+      <i class="mag-gloss"></i>
+      <b class="sign">TOON VAULT</b>
     </div>
     <div class="world" data-vibe="movie">
-      <i class="curtain left"></i>
-      <i class="curtain right"></i>
-      <i class="neon-row"></i>
-      <i class="bulbs"></i>
-      <i class="aisle"></i>
-      <i class="seats"></i>
-      <b class="sign">NOW SHOWING</b>
+      <i class="mag-bg"></i>
+      <i class="mag-scrim"></i>
+      <i class="mag-gloss"></i>
+      <b class="sign">REEL CULTURE</b>
     </div>
     <div class="world" data-vibe="jam">
-      <i class="lockers"></i>
-      <i class="palm l"></i><i class="palm r"></i>
-      <i class="squig a"></i><i class="squig b"></i><i class="squig c"></i>
-      <i class="geo tri"></i><i class="geo dot"></i><i class="geo zap"></i>
-      <b class="sign">BAYSIDE HIGH</b>
+      <i class="mag-bg"></i>
+      <i class="mag-scrim"></i>
+      <i class="mag-gloss"></i>
+      <b class="sign">CHART CRUSH</b>
     </div>
     <div class="world" data-vibe="cart">
-      <i class="den-wood"></i>
-      <i class="den-tv"></i>
-      <i class="console">
-        <i class="deck"></i>
-        <i class="slot"></i>
-        <i class="cartridge"><b>90s</b></i>
-        <i class="led"></i>
-      </i>
-      <b class="sign">INSERT CART</b>
+      <i class="mag-bg"></i>
+      <i class="mag-scrim"></i>
+      <i class="mag-gloss"></i>
+      <b class="sign">PLAY MOUNTAIN</b>
     </div>
     <div class="world" data-vibe="fad">
-      <i class="xmas-window"></i>
-      <i class="hearth"></i>
-      <i class="tree"></i>
-      <i class="xmas-lights"></i>
-      <i class="gift a"></i><i class="gift b"></i><i class="gift c"></i>
-      <i class="paper"></i>
-      <b class="sign">TO: YOU</b>
+      <i class="mag-bg"></i>
+      <i class="mag-scrim"></i>
+      <i class="mag-gloss"></i>
+      <b class="sign">MUST-HAVES</b>
     </div>
   </div>
 
@@ -82,8 +74,7 @@
   <header class="top">
     <span class="brand">
       <strong>NOSTALMANAC</strong>
-      <em id="verBadge">v2.0</em>
-      <small id="liveStat">100K+ scrolling · road to 4M</small>
+      <em id="verBadge">v1.990</em>
     </span>
     <span class="top-btns">
       <button type="button" id="btnSearch">Search</button>
@@ -92,14 +83,26 @@
   </header>
 
   <main id="stage">
-    <figure id="sticker">
-      <img id="art" alt="" referrerpolicy="no-referrer">
-      <span id="stickerTag">CARTOON</span>
-    </figure>
+    <div id="showBadge" class="show-badge">YOU'RE UP!</div>
+    <div class="masthead">
+      <span id="magSection">TOON VAULT</span>
+      <span class="masthead-rule" aria-hidden="true"></span>
+      <span id="magYear">1990</span>
+    </div>
+    <div class="crt-console">
+      <div class="crt-bezel">
+        <div class="crt-screen">
+          <figure id="sticker">
+            <img id="art" alt="" referrerpolicy="no-referrer">
+            <span id="stickerTag">CARTOONS</span>
+          </figure>
+        </div>
+      </div>
+    </div>
     <footer class="copy">
-      <p id="tag">1994 · CARTOON</p>
+      <p id="tag">1990 · CARTOONS</p>
       <h1 id="title">Nostalmanac</h1>
-      <p id="note">Push play.</p>
+      <p id="note">Tap in and scroll.</p>
       <div class="links">
         <a id="ytLink" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
         <a id="wikiLink" href="https://en.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a>
@@ -121,20 +124,12 @@
 
   <div id="connect">
     <canvas id="bootFx"></canvas>
-    <div class="connect-card">
-      <p class="patch-tag">v2.0 · MAJOR UPDATE</p>
+    <div class="wormhole-crt" aria-hidden="true"></div>
+    <div class="wormhole-ui">
+      <p class="wh-ver">v1.990</p>
       <h1>NOSTALMANAC</h1>
-      <ul class="patch-notes">
-        <li><b>2× the hits</b> — now <span id="patchCount">500+</span> all-time greats across cartoons, movies, songs, games &amp; fads</li>
-        <li><b>Audio upgrade</b> — louder wipes, slime splats, channel-surf stingers, smoother previews</li>
-        <li><b>Slime fix</b> — Nick goo only on transitions; wipes clean when your card lands</li>
-        <li><b>Eye candy</b> — poster snap-ins, CRT polish, worlds that pop harder</li>
-      </ul>
-      <div class="modem-line">
-        <span id="bootStatus">Tap to connect at 28,800 bps</span>
-        <i class="modem-bar"><i id="bootFill"></i></i>
-      </div>
-      <b>Tap anywhere to enter</b>
+      <p class="wh-cta">TAP IN — RANDOM ROUND</p>
+      <span id="bootStatus" aria-live="polite"></span>
     </div>
   </div>
 
@@ -152,6 +147,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=37"></script>
+  <script type="module" src="js/app.js?v=39"></script>
 </body>
 </html>

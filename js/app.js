@@ -5,7 +5,13 @@ import { Boombox } from './sound.js';
 
 const $ = (id) => document.getElementById(id);
 const VIBE = { cartoon: 'toon', movie: 'movie', music: 'jam', game: 'cart', fad: 'fad' };
-const LABEL = { cartoon: 'CARTOON', movie: 'MOVIE', music: 'SONG', game: 'GAME', fad: 'FAD' };
+const SECTION = {
+  cartoon: { vault: 'TOON VAULT', chip: 'CARTOONS', drawer: 'TOON VAULT' },
+  movie: { vault: 'REEL CULTURE', chip: 'MOVIES', drawer: 'REEL CULTURE' },
+  music: { vault: 'CHART CRUSH', chip: 'SONGS', drawer: 'CHART CRUSH' },
+  game: { vault: 'PLAY MOUNTAIN', chip: 'GAMES', drawer: 'PLAY MOUNTAIN' },
+  fad: { vault: 'MUST-HAVES', chip: 'FADS', drawer: 'MUST-HAVES' },
+};
 
 const boom = new Boombox();
 let deck = ITEMS.slice();
@@ -15,8 +21,16 @@ let catFilter = '';
 let artTok = 0;
 let wipeLock = false;
 let coolUntil = 0;
+let showRound = Math.floor(Math.random() * 900) + 100;
 
-function rainMatrix(canvas) {
+function randomDeckIndex(exclude = -1) {
+  if (deck.length <= 1) return 0;
+  let pick = exclude;
+  while (pick === exclude) pick = Math.floor(Math.random() * deck.length);
+  return pick;
+}
+
+function wormholeMatrix(canvas) {
   const ctx = canvas.getContext('2d');
   const kata = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ012345789Z';
   let drops = [];
@@ -24,29 +38,41 @@ function rainMatrix(canvas) {
   let live = true;
   const fit = () => {
     const dpr = Math.min(devicePixelRatio || 1, 2);
-    const w = innerWidth;
-    const h = innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
+    canvas.width = innerWidth * dpr;
+    canvas.height = innerHeight * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    font = Math.max(12, Math.floor(w / 42));
-    drops = Array.from({ length: Math.ceil(w / font) }, () => Math.random() * -40);
+    font = Math.max(11, Math.floor(innerWidth / 38));
+    drops = Array.from({ length: Math.ceil(innerWidth / font) }, () => Math.random() * -50);
   };
   fit();
   window.addEventListener('resize', fit);
   const tick = () => {
     if (!live) return;
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    const w = innerWidth;
+    const h = innerHeight;
+    const cx = w * 0.5;
+    const cy = h * 0.44;
+    ctx.fillStyle = 'rgba(2,8,4,.28)';
+    ctx.fillRect(0, 0, w, h);
     ctx.font = `${font}px monospace`;
     drops.forEach((y, i) => {
       const x = i * font;
-      ctx.globalAlpha = 0.55;
-      ctx.fillStyle = '#b6ffce';
-      ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x, y * font);
-      ctx.fillStyle = '#00c853';
-      ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x, (y - 1) * font);
-      if (y * font > innerHeight && Math.random() > 0.975) drops[i] = 0;
-      else drops[i] = y + 0.85;
+      const py = y * font;
+      const dist = Math.hypot(x - cx, py - cy) / Math.max(cx, cy);
+      const tunnel = 1 - Math.min(1, dist * 1.05);
+      const alpha = 0.08 + tunnel * 0.72;
+      const bright = tunnel > 0.55;
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = bright ? '#e8fff0' : '#6dff9a';
+      ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x, py);
+      if (bright) {
+        ctx.globalAlpha = alpha * 0.45;
+        ctx.fillStyle = '#00ff88';
+        ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x + 1, py - font * 0.6);
+      }
+      const speed = 0.55 + tunnel * 1.35;
+      if (py > h + font && Math.random() > 0.96) drops[i] = Math.random() * -20;
+      else drops[i] = y + speed;
     });
     ctx.globalAlpha = 1;
     requestAnimationFrame(tick);
@@ -124,11 +150,17 @@ function wipe(kind) {
 }
 
 function render(item) {
-  $('tag').textContent = `${item.year} · ${LABEL[item.cat] || item.cat.toUpperCase()}`;
+  const sec = SECTION[item.cat] || { vault: item.cat.toUpperCase(), chip: item.cat.toUpperCase() };
+  $('magSection').textContent = sec.vault;
+  $('magYear').textContent = String(item.year);
+  $('tag').textContent = `${item.year} · ${sec.chip}`;
   $('title').textContent = item.title;
   $('note').textContent = item.note;
-  $('stickerTag').textContent = LABEL[item.cat] || item.cat.toUpperCase();
-  $('pos').textContent = `${i + 1} / ${deck.length}`;
+  $('stickerTag').textContent = sec.chip;
+  showRound = Math.floor(Math.random() * 900) + 100;
+  $('pos').textContent = `ROUND ${showRound} · ${deck.length} IN PLAY`;
+  $('showBadge')?.classList.add('pop');
+  setTimeout(() => $('showBadge')?.classList.remove('pop'), 420);
   $('ytLink').href = youtubeUrl(item);
   $('wikiLink').href = wikiSearch(item);
   paintWorld(item.cat);
@@ -143,13 +175,13 @@ function render(item) {
   }).catch(() => {});
 }
 
-function prefetchAround() {
+function prefetchRandom() {
   if (deck.length < 2) return;
-  const next = deck[(i + 1) % deck.length];
-  const prev = deck[(i - 1 + deck.length) % deck.length];
-  portrait(next).catch(() => {});
-  portrait(prev).catch(() => {});
-  boom.lookup(next).catch(() => {});
+  const a = deck[randomDeckIndex(i)];
+  const b = deck[randomDeckIndex(i)];
+  portrait(a).catch(() => {});
+  portrait(b).catch(() => {});
+  boom.lookup(a).catch(() => {});
 }
 
 function go(next, fx) {
@@ -163,14 +195,20 @@ function go(next, fx) {
   if (prevCat && prevCat !== item.cat) boom.channelSurf(item.cat);
   else boom.slideLand();
   boom.play(item);
-  prefetchAround();
+  boom.crowdCheer();
+  prefetchRandom();
 }
 
-function step(dir) {
+function spinRandom(fx) {
+  if (!deck.length) return;
+  go(randomDeckIndex(i), fx);
+}
+
+function step() {
   if (wipeLock || Date.now() < coolUntil) return;
   wipeLock = true;
-  try { navigator.vibrate?.(10); } catch {}
-  go(i + dir);
+  try { navigator.vibrate?.(14); } catch {}
+  spinRandom();
   setTimeout(() => { wipeLock = false; }, 260);
 }
 
@@ -207,8 +245,6 @@ function closeDrawer() {
 }
 
 function boot() {
-  const patchCount = $('patchCount');
-  if (patchCount) patchCount.textContent = String(ITEMS.length);
   const ver = $('verBadge');
   if (ver) ver.textContent = `v${CATALOG_V}`;
   document.title = `NOSTALMANAC · v${CATALOG_V}`;
@@ -216,7 +252,7 @@ function boot() {
   const years = $('years');
   years.innerHTML = `<button type="button" data-year="" class="on">ALL</button>`
     + Array.from({ length: 10 }, (_, n) => 1990 + n).map((y) => `<button type="button" data-year="${y}">${y}</button>`).join('');
-  $('cats').innerHTML = [['', 'ALL'], ['cartoon', 'CARTOONS'], ['movie', 'MOVIES'], ['music', 'SONGS'], ['game', 'GAMES'], ['fad', 'FADS']]
+  $('cats').innerHTML = [['', 'ALL'], ['cartoon', 'TOON VAULT'], ['movie', 'REEL CULTURE'], ['music', 'CHART CRUSH'], ['game', 'PLAY MOUNTAIN'], ['fad', 'MUST-HAVES']]
     .map(([id, label], n) => `<button type="button" data-cat="${id}" class="${n === 0 ? 'on' : ''}">${label}</button>`).join('');
 
   years.addEventListener('click', (e) => {
@@ -259,8 +295,8 @@ function boot() {
 
   boom.onLabel = (t) => { $('nowplay').textContent = t; };
 
-  $('prev').addEventListener('click', () => step(-1));
-  $('next').addEventListener('click', () => step(1));
+  $('prev').addEventListener('click', () => step());
+  $('next').addEventListener('click', () => step());
 
   let sx = 0;
   let sy = 0;
@@ -272,28 +308,33 @@ function boot() {
     const dx = e.changedTouches[0].clientX - sx;
     const dy = e.changedTouches[0].clientY - sy;
     if (Math.abs(dx) < 40 && Math.abs(dy) < 40) return;
-    if (Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
-    else step(dy < 0 ? 1 : -1);
+    step();
   }, { passive: true });
 
   document.addEventListener('wheel', (e) => {
     if (Math.abs(e.deltaY) < 12) return;
-    step(e.deltaY > 0 ? 1 : -1);
+    step();
   }, { passive: true });
 
   let started = false;
-  const stopRain = rainMatrix($('bootFx'));
+  const stopRain = wormholeMatrix($('bootFx'));
   const start = async () => {
     if (started) return;
     started = true;
     coolUntil = Date.now() + 5000;
     boom.unlock();
-    $('connect').classList.add('booting');
-    await boom.dialUp((s) => { $('bootStatus').textContent = s; });
+    const connect = $('connect');
+    connect.classList.add('booting');
+    await boom.dialUp((s) => { if (s) $('bootStatus').textContent = s; });
+    connect.classList.add('exit');
+    document.body.classList.add('is-live');
+    await new Promise((r) => setTimeout(r, 820));
     stopRain();
-    $('connect').classList.add('gone');
+    connect.classList.add('gone');
     coolUntil = Date.now() + 500;
-    go(0, 'scratch');
+    document.body.classList.add('game-show');
+    boom.gameShowStinger();
+    spinRandom('scratch');
   };
   ['pointerdown', 'touchstart', 'click'].forEach((ev) => {
     $('connect').addEventListener(ev, start, { passive: true });

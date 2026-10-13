@@ -225,6 +225,47 @@ export class Boombox {
     o.stop(now + 0.14);
   }
 
+  crowdCheer() {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    this.noise(0.22, 0.12, (t) => (t < 0.15 ? 1 : 1 - t));
+    for (let i = 0; i < 5; i++) {
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(280 + i * 90 + Math.random() * 40, now + i * 0.03);
+      o.frequency.exponentialRampToValueAtTime(520 + i * 60, now + i * 0.03 + 0.14);
+      g.gain.setValueAtTime(0.0001, now + i * 0.03);
+      g.gain.exponentialRampToValueAtTime(0.05, now + i * 0.03 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.03 + 0.16);
+      o.connect(g).connect(this.master || this.ctx.destination);
+      o.start(now + i * 0.03);
+      o.stop(now + i * 0.03 + 0.18);
+    }
+  }
+
+  gameShowStinger() {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    const notes = [392, 523, 659, 784];
+    notes.forEach((f, i) => {
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      o.type = 'square';
+      o.frequency.value = f;
+      const t = now + i * 0.09;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.11, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      o.connect(g).connect(this.master || this.ctx.destination);
+      o.start(t);
+      o.stop(t + 0.24);
+    });
+    this.slimeSplat();
+  }
+
   slideLand() {
     if (!this.ctx || this.muted) return;
     this.ctx.resume();

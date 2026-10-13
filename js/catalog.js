@@ -1,6 +1,7 @@
 /** 90s kid pop culture only. No people-as-news, no events. */
 
 import { EXPANSION } from './catalog-expansion.js';
+import { GAME_WAVE } from './catalog-games-wave.js';
 
 export const RAW = `
 1990|movie|Home Alone|Fox|Macaulay vs the Wet Bandits. Every December, still.|Home Alone|Home Alone soundtrack John Williams
@@ -310,5 +311,5 @@ export function parseCatalog(src) {
   return out;
 }
 
-export const ITEMS = parseCatalog(`${RAW}\n${EXPANSION}`);
-export const CATALOG_V = '2.0';
+export const ITEMS = parseCatalog(`${RAW}\n${EXPANSION}\n${GAME_WAVE}`);
+export const CATALOG_V = '1.990';
