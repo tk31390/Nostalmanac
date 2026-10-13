@@ -74,8 +74,33 @@ body.is-live .top {
 
 /* Wormhole boot */
 #connect {
-  perspective: 900px;
+  perspective: 1100px;
+  transform-style: preserve-3d;
   background: radial-gradient(circle at 50% 42%, #0a2818 0 12%, #020806 55%, #000 100%);
+}
+#connect.tunnel-on {
+  animation: tunnelPulse 1.6s ease-in-out infinite;
+}
+@keyframes tunnelPulse {
+  0%, 100% { filter: brightness(1) saturate(1.05); }
+  50% { filter: brightness(1.14) saturate(1.22) contrast(1.06); }
+}
+#connect.tunnel-on .wormhole-crt {
+  animation: crtBreath 1.8s ease-in-out infinite;
+}
+@keyframes crtBreath {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.92; }
+}
+#connect.tunnel-on .wormhole-ui {
+  animation: uiFloat 2.2s ease-in-out infinite;
+}
+@keyframes uiFloat {
+  50% { transform: translateZ(40px) translateY(-4px); }
+}
+#bootFx {
+  filter: contrast(1.15) saturate(1.2);
+  transform: scale(1.03);
 }
 #connect.exit {
   animation: wormholeOut 0.9s cubic-bezier(.4,0,.2,1) forwards;

@@ -173,6 +173,82 @@ const CUES = {
   'crazy taxi': { queries: ['Crazy Taxi Off the Wall Hideki Naganuma'], want: ['crazy taxi', 'naganuma'], why: 'Crazy Taxi' },
   'chrono cross': { queries: ['Chrono Cross Scars of Time Yasunori Mitsuda'], want: ['chrono cross', 'mitsuda'], why: 'Chrono Cross' },
   'final fantasy viii': { queries: ['Final Fantasy VIII Liberi Fatali Nobuo Uematsu'], want: ['final fantasy viii', 'uematsu'], why: 'Final Fantasy VIII' },
+  'streets of rage 2': { queries: ['Streets of Rage 2 Yuzo Koshiro'], want: ['streets', 'rage', 'koshiro'], why: 'Streets of Rage 2' },
+  'streets of rage 3': { queries: ['Streets of Rage 3 Yuzo Koshiro'], want: ['streets', 'rage'], why: 'Streets of Rage 3' },
+  'comix zone': { queries: ['Comix Zone soundtrack'], want: ['comix', 'zone'], why: 'Comix Zone' },
+  'gunstar heroes': { queries: ['Gunstar Heroes Mega Drive'], want: ['gunstar'], why: 'Gunstar Heroes' },
+  'phantasy star iv': { queries: ['Phantasy Star IV soundtrack'], want: ['phantasy', 'star'], why: 'Phantasy Star IV' },
+  'ecco the dolphin': { queries: ['Ecco the Dolphin theme'], want: ['ecco', 'dolphin'], why: 'Ecco the Dolphin' },
+  'vectorman': { queries: ['Vectorman theme'], want: ['vectorman'], why: 'Vectorman' },
+  'ristar': { queries: ['Ristar theme'], want: ['ristar'], why: 'Ristar' },
+  'f zero': { queries: ['F-Zero Mute City'], want: ['mute', 'city', 'zero'], why: 'F-Zero' },
+  'super castlevania iv': { queries: ['Super Castlevania IV Bloody Tears'], want: ['castlevania'], why: 'Super Castlevania IV' },
+  'wild guns': { queries: ['Wild Guns soundtrack'], want: ['wild', 'guns'], why: 'Wild Guns' },
+  'terranigma': { queries: ['Terranigma soundtrack'], want: ['terranigma'], why: 'Terranigma' },
+  'mega man x2': { queries: ['Mega Man X2 Sigma Stage'], want: ['mega', 'man', 'x2'], why: 'Mega Man X2' },
+  'mega man x3': { queries: ['Mega Man X3 Zero Theme'], want: ['mega', 'man', 'x3'], why: 'Mega Man X3' },
+  'crash bandicoot 2: cortex strikes back': { queries: ['Crash Bandicoot 2 Josh Mancell'], want: ['crash', 'mancell'], why: 'Crash 2' },
+  'crash bandicoot: warped': { queries: ['Crash Bandicoot Warped theme'], want: ['crash', 'warped'], why: 'Crash 3' },
+  'spyro 2: ripto\'s rage!': { queries: ['Spyro 2 Riptos Rage Stewart Copeland'], want: ['spyro', 'ripto'], why: 'Spyro 2' },
+  'spyro: year of the dragon': { queries: ['Spyro Year of the Dragon'], want: ['spyro', 'dragon'], why: 'Spyro 3' },
+  'ape escape': { queries: ['Ape Escape theme'], want: ['ape', 'escape'], why: 'Ape Escape' },
+  'parappa the rapper': { queries: ['PaRappa the Rapper Chop Chop Master Onion'], want: ['parappa'], why: 'PaRappa' },
+  'um jammer lammy': { queries: ['Um Jammer Lammy Fire Fire'], want: ['lammy'], why: 'Um Jammer Lammy' },
+  'legend of dragoon': { queries: ['Legend of Dragoon Rose theme'], want: ['dragoon'], why: 'Legend of Dragoon' },
+  'final fantasy ix': { queries: ['Final Fantasy IX Melodies of Life'], want: ['final', 'fantasy', 'ix'], why: 'Final Fantasy IX' },
+  'suikoden ii': { queries: ['Suikoden II Beautiful Golden Sunshine'], want: ['suikoden'], why: 'Suikoden II' },
+  'xenogears': { queries: ['Xenogears Creidos'], want: ['xenogears'], why: 'Xenogears' },
+  'vagrant story': { queries: ['Vagrant Story theme'], want: ['vagrant', 'story'], why: 'Vagrant Story' },
+  'final fantasy tactics': { queries: ['Final Fantasy Tactics Ovelia and Delita'], want: ['tactics', 'final', 'fantasy'], why: 'Final Fantasy Tactics' },
+  'pulp fiction': { queries: ['Misirlou Dick Dale Pulp Fiction'], want: ['misirlou', 'dick', 'dale'], why: 'Misirlou' },
+  'good will hunting': { queries: ['Miss Misery Elliott Smith'], want: ['elliott', 'misery'], why: 'Miss Misery' },
+  'the prince of egypt': { queries: ['When You Believe Whitney Houston'], want: ['when', 'believe'], why: 'When You Believe' },
+  'saving private ryan': { queries: ['Saving Private Ryan Hymn to the Fallen'], want: ['hymn', 'fallen'], why: 'Hymn to the Fallen' },
+  'hocus pocus': { queries: ['I Put a Spell on You Bette Midler'], want: ['spell', 'midler'], why: 'I Put a Spell on You' },
+  'free willy': { queries: ['Free Willy theme'], want: ['free', 'willy'], why: 'Free Willy' },
+  'the crow': { queries: ['The Crow soundtrack Big Empty'], want: ['crow', 'empty'], why: 'The Crow' },
+  'rush hour': { queries: ['Rush Hour Chris Tucker theme'], want: ['rush', 'hour'], why: 'Rush Hour' },
+  'teenage mutant ninja turtles: turtles in time': { queries: ['Teenage Mutant Ninja Turtles Turtles in Time'], want: ['turtles', 'time'], why: 'Turtles in Time' },
+  'the simpsons arcade game': { queries: ['The Simpsons Arcade Game theme'], want: ['simpsons', 'arcade'], why: 'Simpsons Arcade' },
+  'tekken 2': { queries: ['Tekken 2 opening'], want: ['tekken'], why: 'Tekken 2' },
+  'time crisis': { queries: ['Time Crisis theme'], want: ['time', 'crisis'], why: 'Time Crisis' },
+  'the house of the dead': { queries: ['The House of the Dead theme'], want: ['house', 'dead'], why: 'House of the Dead' },
+  'nicktoons racing': { queries: ['Nicktoons Racing theme'], want: ['nicktoons'], why: 'Nicktoons Racing' },
+  'rugrats: search for reptar': { queries: ['Rugrats Search for Reptar'], want: ['rugrats', 'reptar'], why: 'Search for Reptar' },
+  'superman: the animated series': { queries: ['Superman The Animated Series theme Shirley Walker'], want: ['superman', 'walker'], why: 'Superman TAS' },
+  'batman beyond': { queries: ['Batman Beyond Theme Shirley Walker'], want: ['batman', 'beyond'], why: 'Batman Beyond' },
+  'digimon adventure': { queries: ['Digimon Theme Paul Gordon'], want: ['digimon'], why: 'Digimon' },
+  'teenage mutant ninja turtles': { queries: ['Teenage Mutant Ninja Turtles theme song'], want: ['turtle', 'hero'], why: 'TMNT theme' },
+  'goof troop': { queries: ['Goof Troop theme'], want: ['goof', 'troop'], why: 'Goof Troop' },
+  'where on earth is carmen sandiego?': { queries: ['Carmen Sandiego theme Rockapella'], want: ['rockapella', 'carmen'], why: 'Carmen Sandiego' },
+  'street sharks': { queries: ['Street Sharks theme'], want: ['street', 'sharks'], why: 'Street Sharks' },
+  'swat kats: the radical squadron': { queries: ['SWAT Kats theme'], want: ['swat', 'kats'], why: 'SWAT Kats' },
+  'mrs. doubtfire': { queries: ['Dude Looks Like a Lady Aerosmith Mrs Doubtfire'], want: ['aerosmith', 'dude'], why: 'Dude Looks Like a Lady' },
+  'the sandlot': { queries: ['The Sandlot soundtrack The Lion Sleeps Tonight'], want: ['lion', 'sleeps'], why: 'The Sandlot' },
+  'jumanji': { queries: ['Jumanji soundtrack Alan Silvestri'], want: ['jumanji', 'silvestri'], why: 'Jumanji theme' },
+  'daria': { queries: ['Daria theme song Splendora Youre Standing on My Neck'], want: ['splendora', 'neck'], why: 'Daria theme' },
+  'doom': { queries: ['Doom E1M1 At Dooms Gate Bobby Prince'], want: ['doom', 'e1m1', 'prince'], why: 'At Doom\'s Gate' },
+  'half-life': { queries: ['Half-Life Hazard Course Kelly Bailey'], want: ['half', 'life', 'bailey'], why: 'Half-Life' },
+  'silent hill': { queries: ['Silent Hill Theme Akira Yamaoka'], want: ['silent', 'hill', 'yamaoka'], why: 'Silent Hill' },
+  'starcraft': { queries: ['StarCraft Terran Theme Glenn Stafford'], want: ['starcraft', 'terran'], why: 'StarCraft Terran' },
+  'quake': { queries: ['Quake soundtrack Nine Inch Nails'], want: ['quake', 'nails'], why: 'Quake' },
+  'tomb raider': { queries: ['Tomb Raider theme Nathan McCree'], want: ['tomb', 'raider', 'mccree'], why: 'Tomb Raider' },
+  'star fox 64': { queries: ['Star Fox 64 Corneria Hajime Wakai'], want: ['star', 'fox', 'corneria'], why: 'Corneria' },
+  'tekken 3': { queries: ['Tekken 3 opening theme'], want: ['tekken'], why: 'Tekken 3' },
+  'mario party': { queries: ['Mario Party theme Yasunori Mitsuda'], want: ['mario', 'party'], why: 'Mario Party' },
+  'matilda': { queries: ['Matilda soundtrack Send Me On My Way Rusted Root'], want: ['rusted', 'root'], why: 'Send Me On My Way' },
+  'the mummy': { queries: ['The Mummy Returns soundtrack Jerry Goldsmith'], want: ['mummy', 'goldsmith'], why: 'The Mummy' },
+  'twister': { queries: ['Twister soundtrack Van Halen Humans Being'], want: ['twister', 'van', 'halen'], why: 'Twister' },
+  'babe': { queries: ['Babe soundtrack If I Had Words'], want: ['babe', 'words'], why: 'If I Had Words' },
+  'casper': { queries: ['Casper soundtrack Remember Me This Way'], want: ['casper', 'remember'], why: 'Casper' },
+  'ace ventura: when nature calls': { queries: ['Ace Ventura When Nature Calls soundtrack'], want: ['ace', 'ventura'], why: 'Ace Ventura' },
+  'the hunchback of notre dame': { queries: ['Hellfire Hunchback of Notre Dame'], want: ['hellfire', 'hunchback'], why: 'Hellfire' },
+  'super soaker': { queries: ['Super Soaker commercial 90s'], want: ['super', 'soaker'], why: 'Super Soaker' },
+  'bagel bites': { queries: ['Bagel Bites jingle pizza on a bagel'], want: ['bagel', 'bites'], why: 'Bagel Bites' },
+  'skip-it': { queries: ['Skip It commercial jingle'], want: ['skip'], why: 'Skip-It' },
+  'surge': { queries: ['Surge soda commercial 90s'], want: ['surge'], why: 'Surge' },
+  'tamagotchi': { queries: ['Tamagotchi theme song'], want: ['tamagotchi'], why: 'Tamagotchi' },
+  'furby': { queries: ['Furbish Furbish Furbish Furby song'], want: ['furby'], why: 'Furby' },
 
   // fads
   'game boy': { queries: ['Tetris Theme Type A Hirokazu Tanaka'], want: ['tetris'], why: 'Tetris' },
@@ -197,16 +273,43 @@ function norm(s) {
 
 const CUE_MAP = Object.fromEntries(Object.entries(CUES).map(([k, v]) => [norm(k), v]));
 
+function musicCue(item) {
+  const artistBits = norm(item.meta).split(' ').filter((w) => w.length > 2 && !['the', 'and'].includes(w));
+  if (!artistBits.length) return null;
+  return {
+    queries: [`${item.title} ${item.meta}`, `${item.meta} ${item.title}`, item.title],
+    want: [...artistBits, ...norm(item.title).split(' ').filter((w) => w.length > 2)].slice(0, 8),
+    why: item.title,
+  };
+}
+
+function autoCue(item) {
+  if (!item.cue || item.cue.length < 10) return null;
+  const want = item.cue.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 3);
+  if (want.length < 2) return null;
+  return {
+    queries: [item.cue, `${item.title} ${item.cue}`, `${item.cue} original`],
+    want: want.slice(0, 8),
+    why: item.cue.split(' ').slice(0, 4).join(' '),
+  };
+}
+
 export function cueFor(item) {
-  return CUE_MAP[norm(item.title)] || null;
+  if (CUE_MAP[norm(item.title)]) return CUE_MAP[norm(item.title)];
+  if (item.cat === 'music') return musicCue(item);
+  return autoCue(item);
+}
+
+/** Slides without a real cue path never enter the deck. */
+export function playableItem(item) {
+  if (item.cat === 'music') return Boolean(musicCue(item));
+  if (CUE_MAP[norm(item.title)]) return true;
+  return Boolean(autoCue(item));
 }
 
 export function queriesFor(item) {
   const cue = cueFor(item);
-  if (cue?.queries?.length) return cue.queries;
-  if (item.cat === 'music') return [`${item.title} ${item.meta || ''}`, item.title];
-  if (item.cue) return [item.cue];
-  return [];
+  return cue?.queries?.length ? cue.queries : [];
 }
 
 function blobOf(t) {
@@ -237,10 +340,14 @@ export function pickTrack(results, item) {
       if (artistBits.length && !artistHits) score = -99;
       else score += artistHits * 6;
       if (blob.includes(norm(item.title).slice(0, 16))) score += 6;
+      if (score < 8) score = -99;
     } else if (cue) {
       const wantHits = want.filter((w) => w && blob.includes(w)).length;
       if (!wantHits) score = -99;
       if (want.length >= 2 && wantHits < 1) score = -99;
+      if (want.length >= 3 && wantHits < 2) score = -99;
+    } else {
+      score = -99;
     }
     return { t, score };
   }).filter((row) => row.score >= 6);

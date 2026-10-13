@@ -2,6 +2,7 @@ import { ITEMS, CATALOG_V } from './catalog.js';
 import { portrait } from './art.js';
 import { youtubeUrl } from './wiki.js';
 import { Boombox } from './sound.js';
+import { createWormholeTunnel } from './wormhole-tunnel.js';
 
 const $ = (id) => document.getElementById(id);
 const VIBE = { cartoon: 'toon', movie: 'movie', music: 'jam', game: 'cart', fad: 'fad' };
@@ -28,57 +29,6 @@ function randomDeckIndex(exclude = -1) {
   let pick = exclude;
   while (pick === exclude) pick = Math.floor(Math.random() * deck.length);
   return pick;
-}
-
-function wormholeMatrix(canvas) {
-  const ctx = canvas.getContext('2d');
-  const kata = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ012345789Z';
-  let drops = [];
-  let font = 16;
-  let live = true;
-  const fit = () => {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = innerWidth * dpr;
-    canvas.height = innerHeight * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    font = Math.max(11, Math.floor(innerWidth / 38));
-    drops = Array.from({ length: Math.ceil(innerWidth / font) }, () => Math.random() * -50);
-  };
-  fit();
-  window.addEventListener('resize', fit);
-  const tick = () => {
-    if (!live) return;
-    const w = innerWidth;
-    const h = innerHeight;
-    const cx = w * 0.5;
-    const cy = h * 0.44;
-    ctx.fillStyle = 'rgba(2,8,4,.28)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.font = `${font}px monospace`;
-    drops.forEach((y, i) => {
-      const x = i * font;
-      const py = y * font;
-      const dist = Math.hypot(x - cx, py - cy) / Math.max(cx, cy);
-      const tunnel = 1 - Math.min(1, dist * 1.05);
-      const alpha = 0.08 + tunnel * 0.72;
-      const bright = tunnel > 0.55;
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = bright ? '#e8fff0' : '#6dff9a';
-      ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x, py);
-      if (bright) {
-        ctx.globalAlpha = alpha * 0.45;
-        ctx.fillStyle = '#00ff88';
-        ctx.fillText(kata[Math.floor(Math.random() * kata.length)], x + 1, py - font * 0.6);
-      }
-      const speed = 0.55 + tunnel * 1.35;
-      if (py > h + font && Math.random() > 0.96) drops[i] = Math.random() * -20;
-      else drops[i] = y + speed;
-    });
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(tick);
-  };
-  tick();
-  return () => { live = false; };
 }
 
 function wikiSearch(item) {
@@ -184,32 +134,44 @@ function prefetchRandom() {
   boom.lookup(a).catch(() => {});
 }
 
-function go(next, fx) {
-  if (!deck.length) return;
+function landOn(pick, fx) {
+  if (!deck.length) return false;
   const prevCat = deck[i]?.cat;
-  i = (next + deck.length) % deck.length;
+  i = (pick + deck.length) % deck.length;
   const item = deck[i];
   const kind = fx || (item.cat === 'music' || item.cat === 'game' ? 'scratch' : 'static');
   wipe(kind);
   render(item);
   if (prevCat && prevCat !== item.cat) boom.channelSurf(item.cat);
   else boom.slideLand();
-  boom.play(item);
   boom.crowdCheer();
   prefetchRandom();
+  return item;
 }
 
-function spinRandom(fx) {
+async function spinRandom(fx) {
   if (!deck.length) return;
-  go(randomDeckIndex(i), fx);
+  const tries = Math.min(64, Math.max(16, deck.length));
+  for (let n = 0; n < tries; n++) {
+    const pick = randomDeckIndex(i);
+    const item = deck[pick];
+    if (!(await boom.hasPreview(item))) continue;
+    landOn(pick, fx);
+    await boom.play(item);
+    return;
+  }
+  $('note').textContent = 'Couldn’t lock a preview — tap again.';
 }
 
-function step() {
+async function step() {
   if (wipeLock || Date.now() < coolUntil) return;
   wipeLock = true;
   try { navigator.vibrate?.(14); } catch {}
-  spinRandom();
-  setTimeout(() => { wipeLock = false; }, 260);
+  try {
+    await spinRandom();
+  } finally {
+    setTimeout(() => { wipeLock = false; }, 320);
+  }
 }
 
 function applyFilters() {
@@ -220,7 +182,7 @@ function applyFilters() {
     if (!q) return true;
     return `${it.title} ${it.meta} ${it.note}`.toLowerCase().includes(q);
   });
-  $('dbCount').textContent = `${deck.length} hits`;
+  $('dbCount').textContent = `${deck.length} hits · every slide has a real cue`;
   $('results').innerHTML = deck.slice(0, 80).map((it, n) => (
     `<li data-i="${n}"><b>${it.title}</b><span>${it.year} · ${it.cat}</span></li>`
   )).join('');
@@ -279,7 +241,15 @@ function boot() {
     const idx = picked ? deck.findIndex((it) => it.title === picked.title && it.cat === picked.cat) : 0;
     i = idx < 0 ? 0 : idx;
     closeDrawer();
-    go(i, picked?.cat === 'music' || picked?.cat === 'game' ? 'scratch' : 'static');
+    const fx = picked?.cat === 'music' || picked?.cat === 'game' ? 'scratch' : 'static';
+    (async () => {
+      if (await boom.hasPreview(deck[i])) {
+        landOn(i, fx);
+        await boom.play(deck[i]);
+      } else {
+        await spinRandom(fx);
+      }
+    })();
   });
 
   $('btnSearch').addEventListener('click', openDrawer);
@@ -317,24 +287,25 @@ function boot() {
   }, { passive: true });
 
   let started = false;
-  const stopRain = wormholeMatrix($('bootFx'));
+  const stopTunnel = createWormholeTunnel($('bootFx'));
   const start = async () => {
     if (started) return;
     started = true;
-    coolUntil = Date.now() + 5000;
+    coolUntil = Date.now() + 2200;
     boom.unlock();
     const connect = $('connect');
-    connect.classList.add('booting');
+    connect.classList.add('booting', 'tunnel-on');
     await boom.dialUp((s) => { if (s) $('bootStatus').textContent = s; });
     connect.classList.add('exit');
     document.body.classList.add('is-live');
-    await new Promise((r) => setTimeout(r, 820));
-    stopRain();
+    await new Promise((r) => setTimeout(r, 780));
+    stopTunnel();
     connect.classList.add('gone');
+    connect.classList.remove('tunnel-on');
     coolUntil = Date.now() + 500;
     document.body.classList.add('game-show');
     boom.gameShowStinger();
-    spinRandom('scratch');
+    await spinRandom('scratch');
   };
   ['pointerdown', 'touchstart', 'click'].forEach((ev) => {
     $('connect').addEventListener(ev, start, { passive: true });

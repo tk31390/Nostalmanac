@@ -80,8 +80,7 @@ export class Boombox {
         this.logon.volume = 0.95;
       }).catch(() => {});
     }
-    this.startGroove();
-    this.duckGroove(0.02);
+    this.duckGroove(0);
   }
 
   tick() {
@@ -300,7 +299,7 @@ export class Boombox {
   async lookup(item) {
     const key = `${item.year}|${item.title}|${item.cue}`;
     if (previewCache.has(key)) return previewCache.get(key);
-    const queries = queriesFor(item).filter(Boolean).slice(0, 3);
+    const queries = queriesFor(item).filter(Boolean).slice(0, 5);
     const pool = [];
     try {
       for (const q of queries) {
@@ -320,23 +319,29 @@ export class Boombox {
     return null;
   }
 
+  async hasPreview(item) {
+    if (!item) return false;
+    const track = await this.lookup(item);
+    return Boolean(track?.previewUrl);
+  }
+
   async play(item) {
-    if (this.muted || !item) return;
+    if (!item) return false;
+    if (this.muted) return false;
     this.pending = item;
     const token = ++this.token;
     const track = await this.lookup(item);
-    if (token !== this.token) return;
+    if (token !== this.token) return false;
     if (!track?.previewUrl) {
-      this.duckGroove(0.22);
-      this.label = '90s BOOM-BAP BED';
-      this.onLabel(this.label);
-      return;
+      this.duckGroove(0);
+      this.onLabel('NO PREVIEW — SKIPPING');
+      return false;
     }
     const same = this.bed.currentSrc === track.previewUrl || this.bed.src === track.previewUrl;
     if (same && !this.bed.paused) {
       this.label = labelFor(track, item);
       this.onLabel(this.label);
-      return;
+      return true;
     }
     this.bed.loop = true;
     this.bed.muted = false;
@@ -348,10 +353,12 @@ export class Boombox {
     try {
       await this.bed.play();
       this.needTap = false;
+      return true;
     } catch {
       this.needTap = true;
       this.onLabel('TAP ANYWHERE FOR MUSIC');
-      this.duckGroove(0.16);
+      this.duckGroove(0.08);
+      return false;
     }
   }
 
@@ -448,7 +455,7 @@ export class Boombox {
     this.modemTone(2100, t + 0.85, 0.32, 'sine', 0.05);
     this.handshake(t + 1.1, 1.4);
     this.modemNoise(t + 2.3, 0.35, 0.06, 900);
-    await new Promise((r) => setTimeout(r, 2800));
+    await new Promise((r) => setTimeout(r, 1600));
     say("You've got nostalgia.");
     this.modemTone(880, this.ctx.currentTime, 0.12, 'sine', 0.04);
     this.modemTone(1320, this.ctx.currentTime + 0.1, 0.18, 'sine', 0.035);
