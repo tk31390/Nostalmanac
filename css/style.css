@@ -734,7 +734,34 @@ body[data-vibe="fad"] #sticker { box-shadow: 0 0 0 10px #c00, 0 0 0 12px #0a5a20
   max-width: 40em;
   text-shadow: 2px 2px 0 #111;
 }
-.links { display: flex; gap: 10px; margin-top: 8px; }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; }
+.links .linkish {
+  color: #111;
+  background: var(--slime, #b6ff00);
+  border: 3px solid #111;
+  padding: 4px 8px;
+  font-family: Archivo Black, sans-serif;
+  font-size: 12px;
+  box-shadow: 3px 3px 0 #111;
+  cursor: pointer;
+}
+.share-status {
+  font-family: VT323, monospace;
+  font-size: 16px;
+  color: var(--nick, #ff6a00);
+}
+#art.is-fallback {
+  object-fit: cover;
+  filter: saturate(1.15) contrast(1.05);
+}
+.verified-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+  font-size: 13px;
+  font-family: Outfit, sans-serif;
+}
 .links a {
   color: #111;
   background: #fff;

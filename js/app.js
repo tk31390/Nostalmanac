@@ -1,9 +1,12 @@
 import { ITEMS, CATALOG_V } from './catalog.js';
-import { portrait } from './art.js';
+import { portrait, fallbackArt } from './art.js';
 import { youtubeUrl } from './wiki.js';
 import { Boombox } from './sound.js';
 import { createWormholeTunnel } from './wormhole-tunnel.js';
 import { SECTION, pickWipe, chipQuip, syncWorldSigns } from './transitions.js';
+import { balancedRandomIndex } from './balance.js';
+import { parseShareHash, findItem, syncHash, shareUrlForItem } from './share.js';
+import { isVerifiedPreview } from './preview-store.js';
 
 const $ = (id) => document.getElementById(id);
 const VIBE = { cartoon: 'toon', movie: 'movie', music: 'jam', game: 'cart', fad: 'fad' };
@@ -17,12 +20,12 @@ let artTok = 0;
 let wipeLock = false;
 let coolUntil = 0;
 let showRound = Math.floor(Math.random() * 900) + 100;
+let verifiedOnly = false;
+const pendingDeepLink = parseShareHash(location.hash);
+const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function randomDeckIndex(exclude = -1) {
-  if (deck.length <= 1) return 0;
-  let pick = exclude;
-  while (pick === exclude) pick = Math.floor(Math.random() * deck.length);
-  return pick;
+  return balancedRandomIndex(deck, exclude);
 }
 
 function wikiSearch(item) {
@@ -121,7 +124,7 @@ function wipeTransition(opts = {}) {
     void sticker?.offsetWidth;
     sticker?.classList.add('land');
     setTimeout(() => document.body.classList.remove('slime-wiped'), 520);
-  }, 480);
+  }, REDUCED_MOTION ? 180 : 480);
 }
 
 let lastYear = null;
@@ -147,6 +150,7 @@ function render(item) {
   $('ytLink').href = youtubeUrl(item);
   $('wikiLink').href = wikiSearch(item);
   paintWorld(item.cat);
+  syncHash(item);
 
   const tok = ++artTok;
   const img = $('art');
@@ -154,8 +158,14 @@ function render(item) {
   img.alt = item.title;
   portrait(item).then((url) => {
     if (tok !== artTok) return;
-    if (url) img.src = url;
-  }).catch(() => {});
+    const fb = fallbackArt(item);
+    img.src = url || fb;
+    img.classList.toggle('is-fallback', !url || url === fb);
+  }).catch(() => {
+    if (tok !== artTok) return;
+    img.src = fallbackArt(item);
+    img.classList.add('is-fallback');
+  });
 }
 
 function prefetchRandom() {
@@ -213,10 +223,12 @@ function applyFilters() {
   deck = ITEMS.filter((it) => {
     if (yearFilter && String(it.year) !== yearFilter) return false;
     if (catFilter && it.cat !== catFilter) return false;
+    if (verifiedOnly && !isVerifiedPreview(it)) return false;
     if (!q) return true;
     return `${it.title} ${it.meta} ${it.note}`.toLowerCase().includes(q);
   });
-  $('dbCount').textContent = `${deck.length} hits · every slide has a real cue`;
+  const verifiedNote = verifiedOnly ? ' · verified previews only' : '';
+  $('dbCount').textContent = `${deck.length} hits · every slide has a real cue${verifiedNote}`;
   $('results').innerHTML = deck.slice(0, 80).map((it, n) => (
     `<li data-i="${n}"><b>${it.title}</b><span>${it.year} · ${it.cat}</span></li>`
   )).join('');
@@ -240,9 +252,32 @@ function closeDrawer() {
   $('drawer').setAttribute('inert', '');
 }
 
+async function landDeepLinkOrRandom() {
+  const ref = parseShareHash(location.hash) || pendingDeepLink;
+  if (ref) {
+    const target = findItem(ITEMS, ref);
+    if (target) {
+      deck = ITEMS.slice();
+      const idx = deck.findIndex((it) => it.title === target.title && it.cat === target.cat && it.year === target.year);
+      if (idx >= 0 && (await boom.hasPreview(deck[idx]))) {
+        landOn(idx);
+        await boom.play(deck[idx]);
+        return;
+      }
+    }
+  }
+  await spinRandom();
+}
+
 function boot() {
+  document.body.classList.toggle('reduce-motion', REDUCED_MOTION);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
   const ver = $('verBadge');
   if (ver) ver.textContent = `v${CATALOG_V}`;
+  const whVer = document.querySelector('.wh-ver');
+  if (whVer) whVer.textContent = `v${CATALOG_V}`;
   document.title = `NOSTALMANAC · v${CATALOG_V}`;
 
   const years = $('years');
@@ -267,6 +302,22 @@ function boot() {
     applyFilters();
   });
   $('search').addEventListener('input', applyFilters);
+  $('verifiedOnly')?.addEventListener('change', (e) => {
+    verifiedOnly = e.target.checked;
+    applyFilters();
+  });
+  $('btnShare')?.addEventListener('click', async () => {
+    const item = deck[i];
+    if (!item) return;
+    const url = shareUrlForItem(item);
+    try {
+      await navigator.clipboard.writeText(url);
+      $('shareStatus').textContent = 'Link copied!';
+      setTimeout(() => { $('shareStatus').textContent = ''; }, 2200);
+    } catch {
+      $('shareStatus').textContent = url;
+    }
+  });
   $('results').addEventListener('click', (e) => {
     const li = e.target.closest('li');
     if (!li) return;
@@ -339,7 +390,7 @@ function boot() {
     coolUntil = Date.now() + 500;
     document.body.classList.add('game-show');
     boom.gameShowStinger();
-    await spinRandom();
+    await landDeepLinkOrRandom();
   };
   ['pointerdown', 'touchstart', 'click'].forEach((ev) => {
     $('connect').addEventListener(ev, start, { passive: true });

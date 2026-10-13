@@ -1,6 +1,9 @@
 /** One HTML audio element. Unlock on the same tap. Groove always plays. */
 
 import { queriesFor, pickTrack, labelFor } from './cues.js';
+import {
+  getStoredTrack, savePreviewHit, markPreviewMiss, recentPreviewMiss,
+} from './preview-store.js';
 
 const SILENT = 'audio/silence.wav';
 const MOBILE = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '')
@@ -316,6 +319,20 @@ export class Boombox {
   async lookup(item) {
     const key = `${item.year}|${item.title}|${item.cue}`;
     if (previewCache.has(key)) return previewCache.get(key);
+    const stored = getStoredTrack(item);
+    if (stored?.previewUrl) {
+      const track = {
+        previewUrl: stored.previewUrl,
+        trackName: stored.trackName,
+        artistName: stored.artistName,
+      };
+      previewCache.set(key, track);
+      return track;
+    }
+    if (recentPreviewMiss(item)) {
+      previewCache.set(key, null);
+      return null;
+    }
     const queries = queriesFor(item).filter(Boolean).slice(0, 5);
     const pool = [];
     try {
@@ -325,14 +342,17 @@ export class Boombox {
         const picked = pickTrack(pool, item);
         if (picked) {
           previewCache.set(key, picked);
+          savePreviewHit(item, picked);
           return picked;
         }
       }
     } catch {
       previewCache.set(key, null);
+      markPreviewMiss(item);
       return null;
     }
     previewCache.set(key, null);
+    markPreviewMiss(item);
     return null;
   }
 
@@ -370,6 +390,7 @@ export class Boombox {
     try {
       await this.bed.play();
       this.needTap = false;
+      savePreviewHit(item, track);
       return true;
     } catch {
       this.needTap = true;

@@ -3,18 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>NOSTALMANAC · v1.990</title>
-  <meta name="description" content="v1.990 — 90s kid cartoons, movies, songs, games, and fads on a CRT. Tap in and scroll.">
+  <title>NOSTALMANAC · v2.1</title>
+  <meta name="description" content="NOSTALMANAC v2.1 — 90s cartoons, movies, songs, games, and fads on a CRT. Tap in, scroll, and every slide plays its song.">
   <meta name="theme-color" content="#ff3d00">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NOSTALMANAC — 90s nostalgia on a CRT">
+  <meta property="og:description" content="663 slides across cartoons, movies, songs, games, and fads. Every slide plays a real preview — tap in and scroll.">
+  <meta property="og:image" content="https://tk31390.github.io/Nostalmanac/assets/og-share.svg">
+  <meta property="og:url" content="https://tk31390.github.io/Nostalmanac/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NOSTALMANAC">
+  <meta name="twitter:description" content="90s kid almanac on a CRT. Every slide plays its song.">
+  <meta name="twitter:image" content="https://tk31390.github.io/Nostalmanac/assets/og-share.svg">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://itunes.apple.com">
   <link rel="preconnect" href="https://en.wikipedia.org">
   <link rel="preconnect" href="https://api.tvmaze.com">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bangers&family=Outfit:wght@600;800&family=VT323&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=43">
-  <link rel="stylesheet" href="css/v1990.css?v=43">
-  <link rel="stylesheet" href="css/gameshow.css?v=43">
+  <link rel="stylesheet" href="css/style.css?v=44">
+  <link rel="stylesheet" href="css/v1990.css?v=44">
+  <link rel="stylesheet" href="css/gameshow.css?v=44">
+  <link rel="stylesheet" href="css/a11y.css?v=44">
 </head>
 <body data-vibe="toon">
   <audio id="bed" playsinline webkit-playsinline loop preload="auto" src="audio/silence.wav"></audio>
@@ -74,7 +85,7 @@
   <header class="top">
     <span class="brand">
       <strong>NOSTALMANAC</strong>
-      <em id="verBadge">v1.990</em>
+      <em id="verBadge">v2.1</em>
     </span>
     <span class="top-btns">
       <button type="button" id="btnSearch">Search</button>
@@ -103,6 +114,8 @@
       <h1 id="title">Nostalmanac</h1>
       <p id="note">Tap in and scroll.</p>
       <div class="links">
+        <button type="button" id="btnShare" class="linkish">Copy link</button>
+        <span id="shareStatus" class="share-status" aria-live="polite"></span>
         <a id="ytLink" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
         <a id="wikiLink" href="https://en.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a>
       </div>
@@ -127,7 +140,7 @@
     <canvas id="bootFx"></canvas>
     <div class="wormhole-crt" aria-hidden="true"></div>
     <div class="wormhole-ui">
-      <p class="wh-ver">v1.990</p>
+      <p class="wh-ver">v2.1</p>
       <h1>NOSTALMANAC</h1>
       <p class="wh-cta">TAP IN — EVERY SLIDE PLAYS ITS SONG</p>
       <span id="bootStatus" aria-live="polite"></span>
@@ -141,6 +154,7 @@
         <button type="button" id="btnClose">Done</button>
       </div>
       <input id="search" type="search" placeholder="Sonic, Rugrats, Beastie Boys…" autocomplete="off">
+      <label class="verified-toggle"><input type="checkbox" id="verifiedOnly"> Verified previews on this device</label>
       <div class="chips" id="years"></div>
       <div class="chips" id="cats"></div>
       <p class="drawer-count" id="dbCount"></p>
@@ -148,6 +162,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=43"></script>
+  <script type="module" src="js/app.js?v=44"></script>
 </body>
 </html>

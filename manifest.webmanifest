@@ -1,0 +1,17 @@
+{
+  "name": "NOSTALMANAC",
+  "short_name": "Nostalmanac",
+  "description": "90s cartoons, movies, songs, games, and fads on a CRT — every slide plays its song.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#010804",
+  "theme_color": "#ff3d00",
+  "icons": [
+    {
+      "src": "assets/og-share.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

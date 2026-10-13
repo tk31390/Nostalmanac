@@ -4,6 +4,18 @@ import { coverImage } from './wiki.js';
 
 const cache = new Map();
 
+const WORLD_FALLBACK = {
+  cartoon: 'assets/world-toon.jpg',
+  movie: 'assets/world-movie.jpg',
+  music: 'assets/world-jam.jpg',
+  game: 'assets/world-cart.jpg',
+  fad: 'assets/world-fad.jpg',
+};
+
+export function fallbackArt(item) {
+  return WORLD_FALLBACK[item?.cat] || WORLD_FALLBACK.cartoon;
+}
+
 function biggerItunes(url) {
   return String(url || '').replace(/\d+x\d+bb/, '1200x1200bb');
 }
@@ -86,18 +98,19 @@ export async function portrait(item, signal) {
   if (cache.has(key)) return cache.get(key);
 
   const jobs = [];
-  if (item.cat === 'music' || item.cat === 'movie') jobs.push(itunesImage(item, signal));
+  if (item.cat === 'music' || item.cat === 'movie' || item.cat === 'game') jobs.push(itunesImage(item, signal));
   if (item.cat === 'tv' || item.cat === 'cartoon') {
     jobs.push(tvmazeImage(item, signal));
     jobs.push(itunesImage(item, signal));
   }
+  if (item.cat === 'fad') jobs.push(itunesImage(item, signal));
   jobs.push(coverImage(item, signal));
 
   try {
     const urls = await Promise.all(jobs);
     const best = urls
       .filter(Boolean)
-      .sort((a, b) => artQuality(b) - artQuality(a))[0] || '';
+      .sort((a, b) => artQuality(b) - artQuality(a))[0] || fallbackArt(item);
     cache.set(key, best);
     return best;
   } catch (err) {
