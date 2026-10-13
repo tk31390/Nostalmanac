@@ -169,9 +169,9 @@ export class Boombox {
     if (!this.ctx || this.muted) return;
     this.ctx.resume();
     const now = this.ctx.currentTime;
-    for (let i = 0; i < 3; i++) {
-      const dur = 0.09 + Math.random() * 0.05;
-      const { filter } = this.noise(dur, 0.55, (t) => 1 - t) || {};
+    for (let i = 0; i < 4; i++) {
+      const dur = 0.08 + Math.random() * 0.06;
+      const { filter } = this.noise(dur, 0.58, (t) => 1 - t * 0.85) || {};
       if (filter) {
         filter.frequency.setValueAtTime(400 + i * 200, now + i * 0.07);
         filter.frequency.exponentialRampToValueAtTime(4200, now + i * 0.07 + dur);
@@ -187,6 +187,58 @@ export class Boombox {
     o.connect(g).connect(this.master || this.ctx.destination);
     o.start(now);
     o.stop(now + 0.22);
+  }
+
+  slimeSplat() {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    this.noise(0.14, 0.38, (t) => Math.exp(-t * 6));
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(180, now);
+    o.frequency.exponentialRampToValueAtTime(55, now + 0.16);
+    g.gain.setValueAtTime(0.22, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    o.connect(g).connect(this.master || this.ctx.destination);
+    o.start(now);
+    o.stop(now + 0.2);
+  }
+
+  channelSurf(cat) {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    const freqs = { cartoon: 440, movie: 330, music: 523, game: 392, fad: 280 };
+    const f = freqs[cat] || 440;
+    this.noise(0.06, 0.18, (t) => 1 - t);
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(f * 1.4, now);
+    o.frequency.exponentialRampToValueAtTime(f, now + 0.08);
+    g.gain.setValueAtTime(0.09, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    o.connect(g).connect(this.master || this.ctx.destination);
+    o.start(now);
+    o.stop(now + 0.14);
+  }
+
+  slideLand() {
+    if (!this.ctx || this.muted) return;
+    this.ctx.resume();
+    const now = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(110, now);
+    o.frequency.exponentialRampToValueAtTime(48, now + 0.09);
+    g.gain.setValueAtTime(0.14, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+    o.connect(g).connect(this.master || this.ctx.destination);
+    o.start(now);
+    o.stop(now + 0.12);
   }
 
   staticBurst() {

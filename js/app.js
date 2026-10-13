@@ -1,4 +1,4 @@
-import { ITEMS } from './catalog.js';
+import { ITEMS, CATALOG_V } from './catalog.js';
 import { portrait } from './art.js';
 import { youtubeUrl } from './wiki.js';
 import { Boombox } from './sound.js';
@@ -66,6 +66,14 @@ function paintWorld(cat) {
   document.querySelectorAll('.world').forEach((el) => {
     el.classList.toggle('is-on', el.dataset.vibe === vibe);
   });
+  const worlds = $('worlds');
+  if (worlds) {
+    worlds.classList.remove('shift');
+    void worlds.offsetWidth;
+    worlds.classList.add('shift');
+    clearTimeout(paintWorld.t);
+    paintWorld.t = setTimeout(() => worlds.classList.remove('shift'), 520);
+  }
 }
 
 function staticFrame(ctx, w, h) {
@@ -83,8 +91,11 @@ function wipe(kind) {
   const el = $('wipe');
   const canvas = $('wipeFx');
   const word = $('wipeWord');
+  const fx = $('fx');
   el.className = '';
   el.classList.add('go', kind, 'slime');
+  document.body.classList.add('is-wiping');
+  fx?.classList.add('slime-burst');
   word.textContent = kind === 'scratch' ? 'SKRRRT' : 'SHHH';
   const ctx = canvas.getContext('2d', { alpha: false });
   const w = canvas.width = Math.min(180, innerWidth / 4);
@@ -92,13 +103,24 @@ function wipe(kind) {
   let n = 0;
   const tick = () => {
     staticFrame(ctx, w, h);
-    if (++n < 12) requestAnimationFrame(tick);
+    if (++n < 14) requestAnimationFrame(tick);
   };
   tick();
   boom.staticBurst();
+  boom.slimeSplat();
   if (kind === 'scratch') boom.scratch();
   clearTimeout(wipe.t);
-  wipe.t = setTimeout(() => { el.className = ''; }, 430);
+  wipe.t = setTimeout(() => {
+    el.className = '';
+    document.body.classList.remove('is-wiping');
+    document.body.classList.add('slime-wiped');
+    fx?.classList.remove('slime-burst');
+    const sticker = $('sticker');
+    sticker?.classList.remove('land');
+    void sticker?.offsetWidth;
+    sticker?.classList.add('land');
+    setTimeout(() => document.body.classList.remove('slime-wiped'), 520);
+  }, 480);
 }
 
 function render(item) {
@@ -121,21 +143,35 @@ function render(item) {
   }).catch(() => {});
 }
 
+function prefetchAround() {
+  if (deck.length < 2) return;
+  const next = deck[(i + 1) % deck.length];
+  const prev = deck[(i - 1 + deck.length) % deck.length];
+  portrait(next).catch(() => {});
+  portrait(prev).catch(() => {});
+  boom.lookup(next).catch(() => {});
+}
+
 function go(next, fx) {
   if (!deck.length) return;
+  const prevCat = deck[i]?.cat;
   i = (next + deck.length) % deck.length;
   const item = deck[i];
   const kind = fx || (item.cat === 'music' || item.cat === 'game' ? 'scratch' : 'static');
   wipe(kind);
   render(item);
+  if (prevCat && prevCat !== item.cat) boom.channelSurf(item.cat);
+  else boom.slideLand();
   boom.play(item);
+  prefetchAround();
 }
 
 function step(dir) {
   if (wipeLock || Date.now() < coolUntil) return;
   wipeLock = true;
+  try { navigator.vibrate?.(10); } catch {}
   go(i + dir);
-  setTimeout(() => { wipeLock = false; }, 220);
+  setTimeout(() => { wipeLock = false; }, 260);
 }
 
 function applyFilters() {
@@ -171,6 +207,12 @@ function closeDrawer() {
 }
 
 function boot() {
+  const patchCount = $('patchCount');
+  if (patchCount) patchCount.textContent = String(ITEMS.length);
+  const ver = $('verBadge');
+  if (ver) ver.textContent = `v${CATALOG_V}`;
+  document.title = `NOSTALMANAC · v${CATALOG_V}`;
+
   const years = $('years');
   years.innerHTML = `<button type="button" data-year="" class="on">ALL</button>`
     + Array.from({ length: 10 }, (_, n) => 1990 + n).map((y) => `<button type="button" data-year="${y}">${y}</button>`).join('');

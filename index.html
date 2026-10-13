@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>NOSTALMANAC · 90s kid</title>
-  <meta name="description" content="Cartoons, movies, songs, games, and fads. Tap play and live in the 90s.">
+  <meta name="description" content="v2.0 — 2× the 90s kid hits. Cartoons, movies, songs, games, and fads. Tap connect and scroll.">
   <meta name="theme-color" content="#ff3d00">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://en.wikipedia.org">
   <link rel="preconnect" href="https://api.tvmaze.com">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bangers&family=Outfit:wght@600;800&family=VT323&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=36">
+  <link rel="stylesheet" href="css/style.css?v=37">
 </head>
 <body data-vibe="toon">
   <audio id="bed" playsinline webkit-playsinline loop preload="auto" src="audio/silence.wav"></audio>
@@ -80,7 +80,11 @@
   </div>
 
   <header class="top">
-    <strong>NOSTALMANAC</strong>
+    <span class="brand">
+      <strong>NOSTALMANAC</strong>
+      <em id="verBadge">v2.0</em>
+      <small id="liveStat">100K+ scrolling · road to 4M</small>
+    </span>
     <span class="top-btns">
       <button type="button" id="btnSearch">Search</button>
       <button type="button" id="btnMute">SOUND ON</button>
@@ -118,8 +122,14 @@
   <div id="connect">
     <canvas id="bootFx"></canvas>
     <div class="connect-card">
-      <p>WELCOME</p>
+      <p class="patch-tag">v2.0 · MAJOR UPDATE</p>
       <h1>NOSTALMANAC</h1>
+      <ul class="patch-notes">
+        <li><b>2× the hits</b> — now <span id="patchCount">500+</span> all-time greats across cartoons, movies, songs, games &amp; fads</li>
+        <li><b>Audio upgrade</b> — louder wipes, slime splats, channel-surf stingers, smoother previews</li>
+        <li><b>Slime fix</b> — Nick goo only on transitions; wipes clean when your card lands</li>
+        <li><b>Eye candy</b> — poster snap-ins, CRT polish, worlds that pop harder</li>
+      </ul>
       <div class="modem-line">
         <span id="bootStatus">Tap to connect at 28,800 bps</span>
         <i class="modem-bar"><i id="bootFill"></i></i>
@@ -142,6 +152,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=36"></script>
+  <script type="module" src="js/app.js?v=37"></script>
 </body>
 </html>

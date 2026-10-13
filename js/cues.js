@@ -46,6 +46,11 @@ const CUES = {
   'freakazoid!': { queries: ['Freakazoid theme original'], want: ['freakazoid'], why: 'Freakazoid theme' },
   'king of the hill': { queries: ['King of the Hill Theme The Refreshments'], want: ['refreshments', 'king of the hill'], why: 'King of the Hill theme' },
   'futurama': { queries: ['Futurama Main Theme Christopher Tyng'], want: ['tyng', 'futurama'], why: 'Futurama theme' },
+  'ducktales': { queries: ['DuckTales Theme Mark Mueller'], want: ['ducktales', 'mueller'], why: 'DuckTales theme' },
+  "chip 'n dale: rescue rangers": { queries: ['Rescue Rangers Theme Mark Mueller'], want: ['rescue rangers'], why: 'Rescue Rangers theme' },
+  'digimon adventure': { queries: ['Digimon Theme Paul Gordon'], want: ['digimon'], why: 'Digimon theme' },
+  'batman beyond': { queries: ['Batman Beyond Theme Shirley Walker'], want: ['batman beyond', 'walker'], why: 'Batman Beyond theme' },
+  'swat kats: the radical squadron': { queries: ['SWAT Kats Theme'], want: ['swat kats'], why: 'SWAT Kats theme' },
 
   // movies
   'home alone': { queries: ['Somewhere in My Memory John Williams Home Alone'], want: ['john williams', 'home alone', 'memory'], why: 'Somewhere in My Memory' },
@@ -105,6 +110,10 @@ const CUES = {
   "she's all that": { queries: ['Kiss Me Sixpence None the Richer'], want: ['sixpence', 'kiss me'], why: 'Kiss Me' },
   'american pie': { queries: ['American Pie Don McLean'], want: ['don mclean', 'american pie'], why: 'American Pie' },
   'pokémon: the first movie': { queries: ['Pokemon Theme Jason Paige'], want: ['jason paige', 'pokemon'], why: 'Pokémon theme' },
+  'hocus pocus': { queries: ['I Put a Spell on You Bette Midler Hocus Pocus'], want: ['hocus pocus', 'midler'], why: 'I Put a Spell on You' },
+  'back to the future part iii': { queries: ['Back to the Future Alan Silvestri'], want: ['silvestri', 'back to the future'], why: 'Back to the Future theme' },
+  'office space': { queries: ['Office Space Mike Judge'], want: ['office space'], why: 'Office Space score' },
+  'the blair witch project': { queries: ['The Blair Witch Project soundtrack'], want: ['blair witch'], why: 'Blair Witch' },
 
   // games
   'super mario world': { queries: ['Super Mario World Athletic Koji Kondo'], want: ['mario', 'kondo'], why: 'Super Mario World' },
@@ -157,6 +166,13 @@ const CUES = {
   'donkey kong 64': { queries: ['DK Rap Donkey Kong 64'], want: ['dk rap', 'donkey kong'], why: 'DK Rap' },
   'pokémon gold and silver': { queries: ['Pokemon Johto Born to Be a Winner', 'Pokemon Theme Jason Paige'], want: ['pokemon'], why: 'Pokémon Johto' },
   'soulcalibur': { queries: ['Soulcalibur character select theme'], want: ['soulcalibur'], why: 'Soulcalibur' },
+  'deus ex': { queries: ['Deus Ex Main Theme'], want: ['deus ex'], why: 'Deus Ex theme' },
+  'the sims': { queries: ['The Sims Theme'], want: ['sims'], why: 'The Sims theme' },
+  'rollercoaster tycoon': { queries: ['RollerCoaster Tycoon Theme'], want: ['rollercoaster tycoon'], why: 'RollerCoaster Tycoon' },
+  'jet set radio': { queries: ['Jet Set Radio Hideki Naganuma'], want: ['jet set', 'naganuma'], why: 'Jet Set Radio' },
+  'crazy taxi': { queries: ['Crazy Taxi Off the Wall Hideki Naganuma'], want: ['crazy taxi', 'naganuma'], why: 'Crazy Taxi' },
+  'chrono cross': { queries: ['Chrono Cross Scars of Time Yasunori Mitsuda'], want: ['chrono cross', 'mitsuda'], why: 'Chrono Cross' },
+  'final fantasy viii': { queries: ['Final Fantasy VIII Liberi Fatali Nobuo Uematsu'], want: ['final fantasy viii', 'uematsu'], why: 'Final Fantasy VIII' },
 
   // fads
   'game boy': { queries: ['Tetris Theme Type A Hirokazu Tanaka'], want: ['tetris'], why: 'Tetris' },

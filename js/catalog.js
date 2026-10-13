@@ -1,5 +1,7 @@
 /** 90s kid pop culture only. No people-as-news, no events. */
 
+import { EXPANSION } from './catalog-expansion.js';
+
 export const RAW = `
 1990|movie|Home Alone|Fox|Macaulay vs the Wet Bandits. Every December, still.|Home Alone|Home Alone soundtrack John Williams
 1990|movie|Ghost|Paramount|The pottery wheel. Unchained Melody. You had to be in that theater.|Ghost (1990 film)|Unchained Melody Righteous Brothers
@@ -308,4 +310,5 @@ export function parseCatalog(src) {
   return out;
 }
 
-export const ITEMS = parseCatalog(RAW);
+export const ITEMS = parseCatalog(`${RAW}\n${EXPANSION}`);
+export const CATALOG_V = '2.0';
