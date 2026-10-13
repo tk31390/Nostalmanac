@@ -2,6 +2,7 @@
 
 import { EXPANSION } from './catalog-expansion.js';
 import { GAME_WAVE } from './catalog-games-wave.js';
+import { MEDIA_WAVE } from './catalog-media-wave.js';
 import { playableItem } from './cues.js';
 
 export const RAW = `
@@ -312,6 +313,6 @@ export function parseCatalog(src) {
   return out;
 }
 
-const ALL_ITEMS = parseCatalog(`${RAW}\n${EXPANSION}\n${GAME_WAVE}`);
+const ALL_ITEMS = parseCatalog(`${RAW}\n${EXPANSION}\n${GAME_WAVE}\n${MEDIA_WAVE}`);
 export const ITEMS = ALL_ITEMS.filter(playableItem);
-export const CATALOG_V = '1.990';
+export const CATALOG_V = '2.002';
